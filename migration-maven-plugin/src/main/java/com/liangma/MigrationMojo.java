@@ -16,16 +16,14 @@ package com.liangma;
  * limitations under the License.
  */
 
+import com.liangma.migration.AnnotatedClassLoader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
+import java.io.IOException;
 
 
 /**
@@ -36,41 +34,36 @@ import java.util.List;
 @Mojo(name = "migration")
 public class MigrationMojo extends AbstractMojo {
 
-
     @Parameter(defaultValue = "${project}")
     public MavenProject project;
 
+    /**
+     *
+     */
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    public String classDirectory;
+
+    /**
+     * 扫描Jar包的前缀
+     */
+    @Parameter(defaultValue = "")
+    public String packagePrefix;
 
     public void execute() throws MojoExecutionException {
-        System.out.println("hello world");
+
+        AnnotatedClassLoader loader = new AnnotatedClassLoader(project, classDirectory, getLog());
+
         try {
-            Class<?> clazz = getClassLoader(this.project).loadClass("com.liangma.migration.pluginTest.domain.Student");
-
-            System.out.println("Class:" + clazz.getCanonicalName());
-
-        } catch (ClassNotFoundException e) {
+            loader.GetAllClasses();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    private ClassLoader getClassLoader(MavenProject project) {
-        try {
-            // 所有的类路径环境，也可以直接用 compilePath
-            List<String> classpathElements = project.getCompileClasspathElements();
+//        loader.getTypesAnnotatedWith(Table.class);
 
-            classpathElements.add(project.getBuild().getOutputDirectory());
-            classpathElements.add(project.getBuild().getTestOutputDirectory());
-            // 转为 URL 数组
-            URL[] urls = new URL[classpathElements.size()];
-            for (int i = 0; i < classpathElements.size(); ++i) {
-                urls[i] = new File((String) classpathElements.get(i)).toURL();
-            }
-            // 自定义类加载器
-            return new URLClassLoader(urls, this.getClass().getClassLoader());
-        } catch (Exception e) {
-            getLog().debug("Couldn't get the classloader.");
-            return this.getClass().getClassLoader();
-        }
+        System.out.println(classDirectory);
+//        System.out.println(packagePrefix);
+        System.out.println("hello, maven plugin");
     }
 
 }
