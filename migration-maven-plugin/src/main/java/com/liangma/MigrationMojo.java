@@ -20,18 +20,57 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
 
 
 /**
  * Goal which touches a timestamp file.
+ *
+ * @requiresDependencyResolution compile
  */
-@Mojo(name="migration")
+@Mojo(name = "migration")
 public class MigrationMojo extends AbstractMojo {
 
-    @Parameter(property = "sayHi.url",defaultValue = "fxtahe.com")
-    private String url;
+
+    @Parameter(defaultValue = "${project}")
+    public MavenProject project;
+
 
     public void execute() throws MojoExecutionException {
         System.out.println("hello world");
+        try {
+            Class<?> clazz = getClassLoader(this.project).loadClass("com.liangma.migration.pluginTest.domain.Student");
+
+            System.out.println("Class:" + clazz.getCanonicalName());
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
+
+    private ClassLoader getClassLoader(MavenProject project) {
+        try {
+            // 所有的类路径环境，也可以直接用 compilePath
+            List<String> classpathElements = project.getCompileClasspathElements();
+
+            classpathElements.add(project.getBuild().getOutputDirectory());
+            classpathElements.add(project.getBuild().getTestOutputDirectory());
+            // 转为 URL 数组
+            URL[] urls = new URL[classpathElements.size()];
+            for (int i = 0; i < classpathElements.size(); ++i) {
+                urls[i] = new File((String) classpathElements.get(i)).toURL();
+            }
+            // 自定义类加载器
+            return new URLClassLoader(urls, this.getClass().getClassLoader());
+        } catch (Exception e) {
+            getLog().debug("Couldn't get the classloader.");
+            return this.getClass().getClassLoader();
+        }
+    }
+
 }

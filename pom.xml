@@ -12,5 +12,6 @@
     <modules>
         <module>migration-maven-plugin</module>
         <module>migration-plugin-test</module>
+        <module>migration-code-first</module>
     </modules>
 </project>
