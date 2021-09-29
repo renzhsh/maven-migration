@@ -18,7 +18,6 @@
         <dependency>
             <groupId>com.liangma</groupId>
             <artifactId>migration-code-first</artifactId>
-            <version>${migration.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -26,7 +25,6 @@
             <plugin>
                 <groupId>com.liangma</groupId>
                 <artifactId>migration-maven-plugin</artifactId>
-                <version>${migration.version}</version>
             </plugin>
         </plugins>
     </build>

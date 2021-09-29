@@ -1,21 +1,22 @@
-package com.liangma.migration;
+package com.liangma.migration.loaders;
 
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class AnnotatedClassLoader {
 
-    private final MavenProject project;
-    private final String classDirectory;
-    private final Log log;
 
-    public AnnotatedClassLoader(MavenProject project, String classDirectory, Log log) {
-        this.project = project;
+    private final Log log;
+    private final ClassLoader loader;
+    private final String classDirectory;
+
+    public AnnotatedClassLoader(ClassLoader loader, String classDirectory, Log log) {
+        this.loader = loader;
         this.classDirectory = classDirectory;
         this.log = log;
     }
@@ -40,8 +41,6 @@ public class AnnotatedClassLoader {
 
     public Set<Class<?>> GetAllClasses() throws Exception {
         Set<Class<?>> classes = new HashSet<>();
-
-        URLClassLoader loader = getClassLoader(project);
 
         File[] files = new File(classDirectory).listFiles();
         ArrayList<String> classNames = GetClassNames(files);
@@ -74,23 +73,4 @@ public class AnnotatedClassLoader {
         return list;
     }
 
-    private URLClassLoader getClassLoader(MavenProject project) {
-        try {
-            // 所有的类路径环境，也可以直接用 compilePath
-            List<String> classpathElements = project.getCompileClasspathElements();
-
-            classpathElements.add(project.getBuild().getOutputDirectory());
-            classpathElements.add(project.getBuild().getTestOutputDirectory());
-            // 转为 URL 数组
-            URL[] urls = new URL[classpathElements.size()];
-            for (int i = 0; i < classpathElements.size(); ++i) {
-                urls[i] = new File((String) classpathElements.get(i)).toURL();
-            }
-            // 自定义类加载器
-            return new URLClassLoader(urls, this.getClass().getClassLoader());
-        } catch (Exception e) {
-            log.debug("Couldn't get the classloader.");
-            return (URLClassLoader) this.getClass().getClassLoader();
-        }
-    }
 }
