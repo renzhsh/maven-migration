@@ -16,18 +16,12 @@ package com.liangma.migration;
  * limitations under the License.
  */
 
-import com.liangma.migration.loaders.AnnotatedClassLoader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
 
 
 /**
@@ -57,39 +51,7 @@ public class MigrationMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
 
-        AnnotatedClassLoader loader = new AnnotatedClassLoader(getClassLoader(project), classDirectory, log);
 
-        try {
-            loader.GetAllClasses();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        loader.getTypesAnnotatedWith(Table.class);
-
-        System.out.println(classDirectory);
-//        System.out.println(packagePrefix);
-        System.out.println("hello, maven plugin");
-    }
-
-    private URLClassLoader getClassLoader(MavenProject project) {
-        try {
-            // 所有的类路径环境，也可以直接用 compilePath
-            List<String> classpathElements = project.getCompileClasspathElements();
-
-            classpathElements.add(project.getBuild().getOutputDirectory());
-            classpathElements.add(project.getBuild().getTestOutputDirectory());
-            // 转为 URL 数组
-            URL[] urls = new URL[classpathElements.size()];
-            for (int i = 0; i < classpathElements.size(); ++i) {
-                urls[i] = new File((String) classpathElements.get(i)).toURL();
-            }
-            // 自定义类加载器
-            return new URLClassLoader(urls, this.getClass().getClassLoader());
-        } catch (Exception e) {
-            log.debug("Couldn't get the classloader.");
-            return (URLClassLoader) this.getClass().getClassLoader();
-        }
     }
 
 }

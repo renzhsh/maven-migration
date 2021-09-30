@@ -1,4 +1,4 @@
-package com.liangma.migration.codeFirst.annotations;
+package com.liangma.migration.annotations;
 
 import java.lang.annotation.*;
 

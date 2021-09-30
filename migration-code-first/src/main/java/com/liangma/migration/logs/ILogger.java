@@ -1,6 +1,6 @@
-package com.liangma.migration.codeFirst.logs;
+package com.liangma.migration.logs;
 
-public interface ILog {
+public interface ILogger {
 
     default boolean isDebugEnabled() {
         return false;

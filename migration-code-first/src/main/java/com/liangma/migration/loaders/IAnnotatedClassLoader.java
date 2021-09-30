@@ -1,4 +1,4 @@
-package com.liangma.migration.codeFirst.loaders;
+package com.liangma.migration.loaders;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ public interface IAnnotatedClassLoader {
      * @param clazz
      * @return
      */
-    List<Class<?>> getTypesAnnotatedWith(Class clazz);
+    List<Class<?>> getTypesAnnotatedWith(Class clazz) throws ClassNotFoundException;
 }
