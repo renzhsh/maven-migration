@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * 注释
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Inherited
 public @interface Comment {

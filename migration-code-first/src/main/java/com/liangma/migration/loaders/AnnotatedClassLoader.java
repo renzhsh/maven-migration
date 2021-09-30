@@ -6,39 +6,43 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class AnnotatedClassLoader implements IAnnotatedClassLoader {
 
     @Autowired
     private ILogger logger;
-    private String classDirectory;
 
+    @Autowired
     private ClassLoader loader;
 
-    public AnnotatedClassLoader(){
-
-    }
+    private String classDirectory;
 
 
     @Override
-    public List<Class<?>> getTypesAnnotatedWith(Class clazz) {
-        return new ArrayList<>();
+    public List<Class<?>> getTypesAnnotatedWith(Class annotationClass) {
+        if (classDirectory == null || classDirectory.isEmpty()) {
+            classDirectory = loader.getResource("").getPath();
+        }
+
+        if (classDirectory.startsWith("/")) {
+            classDirectory = classDirectory.substring(1);
+        }
+
+        List<Class<?>> list = getAllClasses();
+
+        return (List<Class<?>>) list.stream().filter(item -> item.isAnnotationPresent(annotationClass)).collect(Collectors.toList());
     }
 
 
-    public Set<Class<?>> GetAllClasses() {
-        Set<Class<?>> classes = new HashSet<>();
+    private List<Class<?>> getAllClasses() {
+        List<Class<?>> classes = new ArrayList<>();
 
         File[] files = new File(classDirectory).listFiles();
-        ArrayList<String> classNames = GetClassNames(files);
-
-        for (String clazz : classNames) {
-            logger.info(clazz);
-        }
+        ArrayList<String> classNames = getClassNames(files);
 
         for (String name : classNames) {
-
             try {
                 classes.add(loader.loadClass(name));
             } catch (ClassNotFoundException e) {
@@ -49,7 +53,7 @@ public class AnnotatedClassLoader implements IAnnotatedClassLoader {
         return classes;
     }
 
-    private ArrayList<String> GetClassNames(File[] files) {
+    private ArrayList<String> getClassNames(File[] files) {
         ArrayList<String> list = new ArrayList<>();
 
         for (File file : files) {
@@ -57,13 +61,13 @@ public class AnnotatedClassLoader implements IAnnotatedClassLoader {
                 String path = file.getPath();
 
                 if (path.endsWith(".class")) {
-                    String className = path.substring(classDirectory.length() + 1, path.length() - ".class".length()).replace("\\", ".");
+                    String className = path.substring(classDirectory.length(), path.length() - ".class".length()).replace("\\", ".");
 
                     list.add(className);
                 }
 
             } else if (file.isDirectory()) {
-                list.addAll(GetClassNames(Objects.requireNonNull(file.listFiles())));
+                list.addAll(getClassNames(Objects.requireNonNull(file.listFiles())));
             }
         }
 

@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * 不能为null
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Inherited
 public @interface Required {

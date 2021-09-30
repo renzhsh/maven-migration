@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * 主键
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Inherited
 public @interface Key {

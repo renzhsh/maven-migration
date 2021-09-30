@@ -1,8 +1,12 @@
 package com.liangma.migration;
 
+import com.liangma.migration.annotations.Table;
 import com.liangma.migration.loaders.IAnnotatedClassLoader;
 import com.liangma.migration.logs.ILogger;
 import org.springframework.stereotype.Component;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 
 /**
@@ -16,7 +20,6 @@ public class MigrationContext {
     private final ILogger log;
 
     /**
-     *
      * @param annotatedClassLoader
      * @param log
      */
@@ -25,8 +28,11 @@ public class MigrationContext {
         this.log = log;
     }
 
+    public void execute() {
+        List<Class<?>> list = annotatedClassLoader.getTypesAnnotatedWith(Table.class);
 
-    public void LoadAllClass(){
-        annotatedClassLoader.getClass();
+        for (Class<?> item : list) {
+            System.out.println(item);
+        }
     }
 }

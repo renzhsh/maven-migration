@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * 最大长度
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Inherited
 public @interface MaxLength {

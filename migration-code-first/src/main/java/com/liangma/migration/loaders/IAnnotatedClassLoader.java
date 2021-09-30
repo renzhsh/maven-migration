@@ -9,8 +9,8 @@ public interface IAnnotatedClassLoader {
 
     /**
      * 获取指定注解的类
-     * @param clazz
+     * @param annotationClass
      * @return
      */
-    List<Class<?>> getTypesAnnotatedWith(Class clazz) throws ClassNotFoundException;
+    List<Class<?>> getTypesAnnotatedWith(Class annotationClass);
 }

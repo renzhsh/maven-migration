@@ -3,7 +3,7 @@ package com.liangma.migration.annotations;
 import java.lang.annotation.*;
 
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Inherited
 public @interface Table {
