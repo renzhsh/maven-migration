@@ -2,6 +2,7 @@ package com.liangma.migration.loaders;
 
 import com.liangma.migration.logs.ILogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,19 +18,14 @@ public class AnnotatedClassLoader implements IAnnotatedClassLoader {
     @Autowired
     private ClassLoader loader;
 
+    @Qualifier("classDirectory")
+    @Autowired
     private String classDirectory;
+
 
 
     @Override
     public List<Class<?>> getTypesAnnotatedWith(Class annotationClass) {
-        if (classDirectory == null || classDirectory.isEmpty()) {
-            classDirectory = loader.getResource("").getPath();
-        }
-
-        if (classDirectory.startsWith("/")) {
-            classDirectory = classDirectory.substring(1);
-        }
-
         List<Class<?>> list = getAllClasses();
 
         return (List<Class<?>>) list.stream().filter(item -> item.isAnnotationPresent(annotationClass)).collect(Collectors.toList());

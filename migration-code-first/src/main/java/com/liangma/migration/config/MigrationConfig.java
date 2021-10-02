@@ -17,6 +17,22 @@ public class MigrationConfig {
         return this.getClass().getClassLoader();
     }
 
+    @Bean("classDirectory")
+    public String classDirectory(ClassLoader loader) {
+        String result = loader.getResource("").getPath();
+
+        if (result.startsWith("/")) {
+            result = result.substring(1);
+        }
+
+        if (!result.endsWith("/")) {
+            result = result + "/";
+        }
+
+        return result;
+    }
+
+
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.druid")
     public DataSource druidDataSource() {
@@ -24,7 +40,7 @@ public class MigrationConfig {
     }
 
     @Bean
-    public JdbcTemplate jdbdTemplate(DataSource dataSource) {
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 }
