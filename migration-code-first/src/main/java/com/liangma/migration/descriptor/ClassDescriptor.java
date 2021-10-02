@@ -1,9 +1,10 @@
 package com.liangma.migration.descriptor;
 
-import com.liangma.migration.annotations.Comment;
+import com.liangma.migration.annotation.Comment;
 import com.liangma.migration.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +52,10 @@ public final class ClassDescriptor {
         }
 
         return comment;
+    }
+
+    public <T extends Annotation> T getAnnotation(@NotNull Class<T> annotationClass) {
+        return target.getAnnotation(annotationClass);
     }
 
     public FieldDescriptor[] getFields() {

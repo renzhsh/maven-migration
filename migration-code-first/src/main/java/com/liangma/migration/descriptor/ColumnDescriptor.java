@@ -1,4 +1,118 @@
 package com.liangma.migration.descriptor;
 
+import com.liangma.migration.convert.MapperExpression;
+import org.jetbrains.annotations.NotNull;
+
 public class ColumnDescriptor {
+
+    /**
+     * 名称
+     */
+    protected String name;
+
+    /**
+     * 注解
+     */
+    protected String comment;
+
+    /**
+     * 字段类型
+     */
+    protected String dbType;
+
+    /**
+     * 最大长度
+     */
+    protected int maxLength;
+
+    /**
+     * 数据精度
+     */
+    protected int precise;
+
+    /**
+     * 是否允许为空
+     */
+    protected boolean allowNull = true;
+
+    /**
+     * 是否为主键
+     */
+    protected boolean isPrimaryKey;
+
+    /**
+     * 主键递增
+     */
+    protected boolean autoIncrement;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
+    }
+
+    public int getMaxLength() {
+        return maxLength;
+    }
+
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
+    }
+
+    public int getPrecise() {
+        return precise;
+    }
+
+    public void setPrecise(int precise) {
+        this.precise = precise;
+    }
+
+    public boolean isAllowNull() {
+        return allowNull;
+    }
+
+    public void setAllowNull(boolean allowNull) {
+        this.allowNull = allowNull;
+    }
+
+    public boolean isPrimaryKey() {
+        return isPrimaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        isPrimaryKey = primaryKey;
+    }
+
+    public boolean isAutoIncrement() {
+        return autoIncrement;
+    }
+
+    public void setAutoIncrement(boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
+    }
+
+    public void setMapperExpression(@NotNull MapperExpression expression) {
+        setDbType(expression.getDbType());
+        setMaxLength(expression.getMaxLength());
+        setPrecise(expression.getPrecise());
+        setAllowNull(expression.isAllowNull());
+    }
 }

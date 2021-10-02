@@ -1,6 +1,7 @@
 package com.liangma.migration;
 
-import com.liangma.migration.annotations.Table;
+import com.liangma.migration.annotation.Table;
+import com.liangma.migration.convert.IDescriptorConverter;
 import com.liangma.migration.descriptor.ClassDescriptor;
 import com.liangma.migration.descriptor.FieldDescriptor;
 import com.liangma.migration.loaders.IAnnotatedClassLoader;
@@ -11,9 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +33,9 @@ public class MigrationContext {
     //用于访问数据库的组件
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public IDescriptorConverter converter;
 
     /**
      * @param annotatedClassLoader
@@ -58,6 +59,7 @@ public class MigrationContext {
         for (FieldDescriptor item : descriptor.getFields()) {
             System.out.println(item);
         }
+
 
     }
 

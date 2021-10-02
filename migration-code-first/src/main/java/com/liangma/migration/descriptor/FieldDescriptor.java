@@ -1,7 +1,7 @@
 package com.liangma.migration.descriptor;
 
-import com.liangma.migration.annotations.Comment;
-import com.liangma.migration.annotations.NotMapped;
+import com.liangma.migration.annotation.Comment;
+import com.liangma.migration.annotation.NotMapped;
 import com.liangma.migration.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

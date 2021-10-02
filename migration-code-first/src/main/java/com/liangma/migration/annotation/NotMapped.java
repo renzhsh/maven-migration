@@ -1,13 +1,13 @@
-package com.liangma.migration.annotations;
+package com.liangma.migration.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * 主键
+ * 不建立数据库字段映射
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Inherited
-public @interface Key {
+public @interface NotMapped {
 }
