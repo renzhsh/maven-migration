@@ -115,4 +115,18 @@ public class ColumnDescriptor {
         setPrecise(expression.getPrecise());
         setAllowNull(expression.isAllowNull());
     }
+
+    @Override
+    public String toString() {
+        return "ColumnDescriptor{" +
+                "name='" + name + '\'' +
+                ", comment='" + comment + '\'' +
+                ", dbType='" + dbType + '\'' +
+                ", maxLength=" + maxLength +
+                ", precise=" + precise +
+                ", allowNull=" + allowNull +
+                ", isPrimaryKey=" + isPrimaryKey +
+                ", autoIncrement=" + autoIncrement +
+                '}';
+    }
 }

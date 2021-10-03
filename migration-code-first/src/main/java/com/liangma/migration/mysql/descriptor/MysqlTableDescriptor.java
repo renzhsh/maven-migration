@@ -11,11 +11,8 @@ public class MysqlTableDescriptor extends TableDescriptor {
 
     private MysqlEngine engine = MysqlEngine.InnoDB;
 
-    /**
-     * 字符集
-     */
-    private String charset = "utf8";
-
+    public MysqlTableDescriptor() {
+    }
 
     public MysqlTableDescriptor(@NotNull TableDescriptor descriptor) {
         this.setName(descriptor.getName());
@@ -31,13 +28,6 @@ public class MysqlTableDescriptor extends TableDescriptor {
         this.engine = engine;
     }
 
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
 
     @Override
     public String toString() {
@@ -45,7 +35,6 @@ public class MysqlTableDescriptor extends TableDescriptor {
                 "name='" + name + '\'' +
                 ", comment='" + comment + '\'' +
                 ", engine=" + engine +
-                ", charset='" + charset + '\'' +
                 "} " + super.toString();
     }
 }

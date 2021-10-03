@@ -30,7 +30,7 @@ public class MysqlSQLGenerator implements ISQLGenerator {
 
         result.append(" " + generatePrimaryKey(key) + "\r\n");
 
-        result.append(") ENGINE=" + mysqlTable.getEngine().name() + " DEFAULT CHARSET=" + mysqlTable.getCharset());
+        result.append(") ENGINE=" + mysqlTable.getEngine().name());
 
         if (!StringUtils.isEmpty(mysqlTable.getComment())) {
             result.append(" COMMENT='" + mysqlTable.getComment() + "'");
