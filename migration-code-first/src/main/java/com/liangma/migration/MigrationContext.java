@@ -4,14 +4,22 @@ import com.liangma.migration.annotation.Table;
 import com.liangma.migration.convert.IDescriptorConverter;
 import com.liangma.migration.descriptor.ClassDescriptor;
 import com.liangma.migration.descriptor.FieldDescriptor;
+import com.liangma.migration.descriptor.TableDescriptor;
+import com.liangma.migration.exception.InvalidCharacterException;
+import com.liangma.migration.exception.InvalidOperateException;
+import com.liangma.migration.exception.MigrationException;
+import com.liangma.migration.exception.NotFoundExpressionException;
+import com.liangma.migration.generator.ISQLGenerator;
 import com.liangma.migration.loaders.IAnnotatedClassLoader;
 import com.liangma.migration.logs.ILogger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +34,9 @@ public class MigrationContext {
 
     private final ILogger log;
 
-    //数据源组件
-    @Autowired
-    private DataSource dataSource;
+//    //数据源组件
+//    @Autowired
+//    private DataSource dataSource;
 
     //用于访问数据库的组件
     @Autowired
@@ -36,6 +44,9 @@ public class MigrationContext {
 
     @Autowired
     public IDescriptorConverter converter;
+
+    @Autowired
+    private ISQLGenerator generator;
 
     /**
      * @param annotatedClassLoader
@@ -49,18 +60,19 @@ public class MigrationContext {
     /**
      * step1 : 获取声明的Table
      */
-    public void getDeclaredTables() {
-        List<Class<?>> list = annotatedClassLoader.getTypesAnnotatedWith(Table.class);
+    public List<TableDescriptor> getDeclaredTables() throws MigrationException {
 
-        List<ClassDescriptor> descriptors = list.stream().map(ClassDescriptor::new).collect(Collectors.toList());
+        List<ClassDescriptor> clazzes = annotatedClassLoader.getTypesAnnotatedWith(Table.class)
+                .stream().map(ClassDescriptor::new)
+                .collect(Collectors.toList());
 
-        ClassDescriptor descriptor = descriptors.stream().findFirst().get();
+        List<TableDescriptor> list = new ArrayList<>();
 
-        for (FieldDescriptor item : descriptor.getFields()) {
-            System.out.println(item);
+        for (ClassDescriptor clazz : clazzes) {
+            list.add(converter.TableConvert(clazz));
         }
 
-
+        return list;
     }
 
     /**
@@ -88,26 +100,41 @@ public class MigrationContext {
     /**
      * step4： 根据变更，生成sql
      */
-    public void generateSql() {
+    public List<String> generateSql(@NotNull List<TableDescriptor> list) {
+        List<String> result = new ArrayList<>();
 
+        for (TableDescriptor table : list) {
+            String sql = generator.generateTable(table);
+            result.add(sql);
+        }
+
+        return result;
     }
 
     /**
      * step5: 根据变更执行到数据库
      */
     @Transactional
-    public void update2db() {
-
+    public void update2db(String sql) {
+        jdbcTemplate.execute(sql);
     }
 
 
     public void execute() {
         try {
-            getDeclaredTables();
+            List<TableDescriptor> list = getDeclaredTables();
+
             getDbTables();
+
             diff();
-            generateSql();
-            update2db();
+
+            List<String> sqls = generateSql(list);
+
+            for (String sql : sqls) {
+                System.out.println(sql);
+//                update2db(sql);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

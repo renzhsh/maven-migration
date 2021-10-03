@@ -50,7 +50,7 @@ public final class FieldDescriptor {
     }
 
     public boolean isIgnore() {
-        return target.isAnnotationPresent(NotMapped.class);
+        return target.isAnnotationPresent(NotMapped.class) || getName().startsWith("_");
     }
 
     public <T extends Annotation> T getAnnotation(@NotNull Class<T> annotationClass) {

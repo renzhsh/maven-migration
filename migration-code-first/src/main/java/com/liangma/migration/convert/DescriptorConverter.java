@@ -2,20 +2,20 @@ package com.liangma.migration.convert;
 
 import com.liangma.migration.annotation.*;
 import com.liangma.migration.config.NamingConvention;
-import com.liangma.migration.descriptor.*;
-import com.liangma.migration.exception.InvalidCharacterException;
-import com.liangma.migration.exception.InvalidOperateException;
-import com.liangma.migration.exception.MigrationException;
-import com.liangma.migration.exception.NotFoundExpressionException;
+import com.liangma.migration.descriptor.ClassDescriptor;
+import com.liangma.migration.descriptor.ColumnDescriptor;
+import com.liangma.migration.descriptor.FieldDescriptor;
+import com.liangma.migration.descriptor.TableDescriptor;
+import com.liangma.migration.exception.*;
 import com.liangma.migration.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +46,7 @@ public class DescriptorConverter implements IDescriptorConverter {
      * @return
      */
     @Override
-    public TableDescriptor TableConvert(ClassDescriptor clazz) {
+    public TableDescriptor TableConvert(ClassDescriptor clazz) throws MigrationException {
         TableDescriptor result = new TableDescriptor();
 
         Table tableAnno = clazz.getAnnotation(Table.class);
@@ -60,6 +60,19 @@ public class DescriptorConverter implements IDescriptorConverter {
             result.setComment(clazz.getComment());
         }
 
+        List<ColumnDescriptor> list = new ArrayList<>();
+
+        for (FieldDescriptor field : clazz.getFields()) {
+            list.add(ColumnConvert(field));
+        }
+
+        if (list.stream().noneMatch(ColumnDescriptor::isPrimaryKey)) {
+            throw new NotFoundKeyException("Class:" + clazz);
+        }
+
+        result.setColumns(list.toArray(new ColumnDescriptor[]{}));
+
+
         return result;
     }
 
@@ -68,7 +81,7 @@ public class DescriptorConverter implements IDescriptorConverter {
      * @return
      */
     @Override
-    public ColumnDescriptor ColumnConvert(FieldDescriptor field) throws NotFoundExpressionException, InvalidCharacterException, InvalidOperateException {
+    public ColumnDescriptor ColumnConvert(FieldDescriptor field) throws MigrationException {
         ColumnDescriptor result = new ColumnDescriptor();
 
         //name
@@ -79,12 +92,19 @@ public class DescriptorConverter implements IDescriptorConverter {
             result.setComment(field.getComment());
         }
 
+        mapDbType(field.getType(), result);
+
         // 主键
         Key keyAnno = field.getAnnotation(Key.class);
         if (keyAnno != null) {
             result.setPrimaryKey(true);
             result.setAllowNull(false);
             result.setAutoIncrement(keyAnno.autoIncrement());
+        } else {
+            if (field.getName().toLowerCase() == "id") { // 主键默认名称
+                result.setPrimaryKey(true);
+                result.setAllowNull(false);
+            }
         }
 
         Required requiredAnno = field.getAnnotation(Required.class);
@@ -97,8 +117,6 @@ public class DescriptorConverter implements IDescriptorConverter {
             result.setMaxLength(maxLengthAnno.value());
             result.setPrecise(maxLengthAnno.precise());
         }
-
-        mapDbType(field.getType(), result);
 
         // 自定义
         Column colAnno = field.getAnnotation(Column.class);
@@ -150,7 +168,6 @@ public class DescriptorConverter implements IDescriptorConverter {
                 }
             }
         }
-
 
         return result;
     }
@@ -206,6 +223,9 @@ public class DescriptorConverter implements IDescriptorConverter {
                 break;
             case "java.util.Date":
                 setTypeMapping("date", column);
+                break;
+            case "java.lang.String":
+                setTypeMapping("string", column);
                 break;
             default:
                 if (fieldType.isEnum()) {

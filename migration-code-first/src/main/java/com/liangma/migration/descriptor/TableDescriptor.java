@@ -5,6 +5,8 @@ public class TableDescriptor {
 
     protected String comment;
 
+    protected ColumnDescriptor[] columns;
+
     public String getName() {
         return name;
     }
@@ -19,6 +21,14 @@ public class TableDescriptor {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public ColumnDescriptor[] getColumns() {
+        return columns;
+    }
+
+    public void setColumns(ColumnDescriptor[] columns) {
+        this.columns = columns;
     }
 
     @Override

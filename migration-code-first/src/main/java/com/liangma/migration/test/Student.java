@@ -5,42 +5,33 @@ import com.liangma.migration.annotation.*;
 import javax.activation.DataSource;
 
 
-//@Comment("this is a student")
+@Comment("this is a student")
 @Table
 public class Student {
 
+    @Key(autoIncrement = true)
     @Comment("唯一标识符")
     private long id;
-    private Long pLong;
-
-    private int pInt;
-    private Integer pInteger;
-
-    private double pDouble;
-    private Double pDouble2;
-
-    private short pShort;
-    private Short pShort2;
-
-    private boolean pBoolean;
-    private Boolean pBoolean2;
-
 
     @Comment("姓名")
     @Required
     private String name;
 
     @Comment("年龄")
+    @Required
     private int age;
 
     @MaxLength(50)
+    @Required
     private String address;
 
     @Comment("性别")
+    @Required
     private Sex Sex;
 
     @Comment("个人简介")
     @MaxLength(255)
+    @Required
     private String profile;
 
     @NotMapped

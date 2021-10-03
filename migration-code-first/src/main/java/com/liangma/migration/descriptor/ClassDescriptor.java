@@ -60,7 +60,10 @@ public final class ClassDescriptor {
 
     public FieldDescriptor[] getFields() {
         if (fields == null) {
-            List<FieldDescriptor> list = Arrays.stream(target.getDeclaredFields()).map(FieldDescriptor::new).collect(Collectors.toList());
+            List<FieldDescriptor> list = Arrays.stream(target.getDeclaredFields())
+                    .map(FieldDescriptor::new)
+                    .filter(item -> !item.isIgnore())
+                    .collect(Collectors.toList());
 
             fields = list.toArray(new FieldDescriptor[]{});
         }

@@ -4,9 +4,11 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.liangma.migration.MigrationContext;
 import com.liangma.migration.convert.MapperExpression;
 import com.liangma.migration.exception.InvalidExpressionException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -56,15 +58,15 @@ public class MigrationConfig {
         mapper.put("byte", new MapperExpression("int,2"));
         mapper.put("short", new MapperExpression("int,8"));
         mapper.put("long", new MapperExpression("bigint"));
-        mapper.put("float", new MapperExpression("bigint"));
-        mapper.put("double", new MapperExpression("bigint,20,8"));
+        mapper.put("float", new MapperExpression("float"));
+        mapper.put("double", new MapperExpression("double,10,4"));
         mapper.put("char", new MapperExpression("varchar"));
+        mapper.put("string", new MapperExpression("varchar,50"));
         mapper.put("boolean", new MapperExpression("int,1"));
         mapper.put("enum", new MapperExpression("int,1"));
         mapper.put("date", new MapperExpression("datetime"));
         return mapper;
     }
-
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.druid")
