@@ -3,6 +3,8 @@ package com.liangma.migration.descriptor;
 import com.liangma.migration.convert.MapperExpression;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ColumnDescriptor {
 
     /**
@@ -114,6 +116,19 @@ public class ColumnDescriptor {
         setMaxLength(expression.getMaxLength());
         setPrecise(expression.getPrecise());
         setAllowNull(expression.isAllowNull());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ColumnDescriptor)) return false;
+        ColumnDescriptor that = (ColumnDescriptor) o;
+        return maxLength == that.maxLength && precise == that.precise && allowNull == that.allowNull && isPrimaryKey == that.isPrimaryKey && autoIncrement == that.autoIncrement && name.equals(that.name) && comment.equals(that.comment) && dbType.equals(that.dbType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, comment, dbType, maxLength, precise, allowNull, isPrimaryKey, autoIncrement);
     }
 
     @Override
