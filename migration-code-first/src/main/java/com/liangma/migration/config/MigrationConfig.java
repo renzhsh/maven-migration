@@ -1,21 +1,21 @@
 package com.liangma.migration.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.liangma.migration.MigrationContext;
-import com.liangma.migration.convert.MapperExpression;
+import com.liangma.migration.mapper.MapperExpression;
 import com.liangma.migration.exception.InvalidExpressionException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import com.liangma.migration.mysql.MysqlMigrationProvider;
+import com.liangma.migration.policy.IMigration;
+import com.liangma.migration.policy.InitializeMigration;
+import com.liangma.migration.policy.MigrationPolicy;
+import com.liangma.migration.provider.IMigrationProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Configuration
 public class MigrationConfig {
@@ -66,6 +66,21 @@ public class MigrationConfig {
         mapper.put("enum", new MapperExpression("int,1"));
         mapper.put("date", new MapperExpression("datetime"));
         return mapper;
+    }
+
+    @Bean
+    public MigrationPolicy migrationPolicy(){
+        return MigrationPolicy.Initialize;
+    }
+
+    @Bean
+    public IMigration migration(IMigrationProvider provider){
+        return new InitializeMigration(provider);
+    }
+
+    @Bean
+    public IMigrationProvider migrationProvider(JdbcTemplate jdbcTemplate){
+        return new MysqlMigrationProvider(jdbcTemplate);
     }
 
     @Bean

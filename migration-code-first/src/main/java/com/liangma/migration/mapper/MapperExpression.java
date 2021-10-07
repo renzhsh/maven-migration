@@ -1,6 +1,5 @@
-package com.liangma.migration.convert;
+package com.liangma.migration.mapper;
 
-import com.liangma.migration.exception.InvalidCharacterException;
 import com.liangma.migration.exception.InvalidExpressionException;
 import com.liangma.migration.util.StringUtils;
 import org.jetbrains.annotations.NotNull;

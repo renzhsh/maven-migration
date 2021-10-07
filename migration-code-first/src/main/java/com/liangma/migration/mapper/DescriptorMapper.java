@@ -1,4 +1,4 @@
-package com.liangma.migration.convert;
+package com.liangma.migration.mapper;
 
 import com.liangma.migration.annotation.*;
 import com.liangma.migration.config.NamingConvention;
@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class DescriptorConverter implements IDescriptorConverter {
+public class DescriptorMapper implements IDescriptorMapper {
 
     /**
      * Table 命名规则
@@ -46,7 +46,7 @@ public class DescriptorConverter implements IDescriptorConverter {
      * @return
      */
     @Override
-    public TableDescriptor TableConvert(ClassDescriptor clazz) throws MigrationException {
+    public TableDescriptor mapTable(ClassDescriptor clazz) throws MigrationException {
         TableDescriptor result = new TableDescriptor();
 
         Table tableAnno = clazz.getAnnotation(Table.class);
@@ -63,7 +63,7 @@ public class DescriptorConverter implements IDescriptorConverter {
         List<ColumnDescriptor> list = new ArrayList<>();
 
         for (FieldDescriptor field : clazz.getFields()) {
-            list.add(ColumnConvert(field));
+            list.add(mapColumn(field));
         }
 
         if (list.stream().noneMatch(ColumnDescriptor::isPrimaryKey)) {
@@ -81,7 +81,7 @@ public class DescriptorConverter implements IDescriptorConverter {
      * @return
      */
     @Override
-    public ColumnDescriptor ColumnConvert(FieldDescriptor field) throws MigrationException {
+    public ColumnDescriptor mapColumn(FieldDescriptor field) throws MigrationException {
         ColumnDescriptor result = new ColumnDescriptor();
 
         //name

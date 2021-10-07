@@ -1,4 +1,4 @@
-package com.liangma.migration.convert;
+package com.liangma.migration.mapper;
 
 import com.liangma.migration.descriptor.ClassDescriptor;
 import com.liangma.migration.descriptor.ColumnDescriptor;
@@ -9,16 +9,16 @@ import com.liangma.migration.exception.*;
 /**
  *
  */
-public interface IDescriptorConverter {
+public interface IDescriptorMapper {
     /**
      * @param clazz
      * @return
      */
-    TableDescriptor TableConvert(ClassDescriptor clazz) throws MigrationException;
+    TableDescriptor mapTable(ClassDescriptor clazz) throws MigrationException;
 
     /**
      * @param field
      * @return
      */
-    ColumnDescriptor ColumnConvert(FieldDescriptor field) throws MigrationException;
+    ColumnDescriptor mapColumn(FieldDescriptor field) throws MigrationException;
 }

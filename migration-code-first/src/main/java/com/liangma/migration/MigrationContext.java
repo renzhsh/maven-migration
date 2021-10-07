@@ -1,7 +1,7 @@
 package com.liangma.migration;
 
 import com.liangma.migration.annotation.Table;
-import com.liangma.migration.convert.IDescriptorConverter;
+import com.liangma.migration.mapper.IDescriptorMapper;
 import com.liangma.migration.descriptor.ClassDescriptor;
 import com.liangma.migration.descriptor.ColumnDescriptor;
 import com.liangma.migration.descriptor.TableDescriptor;
@@ -10,6 +10,9 @@ import com.liangma.migration.generator.ISQLGenerator;
 import com.liangma.migration.jdbc.IJdbcExecutor;
 import com.liangma.migration.loaders.IAnnotatedClassLoader;
 import com.liangma.migration.logs.ILogger;
+import com.liangma.migration.policy.IMigration;
+import com.liangma.migration.policy.IMigrationFactory;
+import com.liangma.migration.policy.MigrationPolicy;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,10 +37,19 @@ public class MigrationContext {
     private IJdbcExecutor jdbcExecutor;
 
     @Autowired
-    private IDescriptorConverter converter;
+    private IDescriptorMapper converter;
 
     @Autowired
     private ISQLGenerator generator;
+
+//    @Autowired
+//    private MigrationPolicy migrationPolicy;
+//
+//    @Autowired
+//    private IMigrationFactory migrationFactory;
+
+    @Autowired
+    private IMigration migration;
 
     /**
      * @param annotatedClassLoader
@@ -62,7 +74,7 @@ public class MigrationContext {
         List<TableDescriptor> list = new ArrayList<>();
 
         for (ClassDescriptor clazz : clazzes) {
-            list.add(converter.TableConvert(clazz));
+            list.add(converter.mapTable(clazz));
         }
 
         return list;
@@ -71,16 +83,16 @@ public class MigrationContext {
     /**
      * step2: 从数据库从获取现有的Table
      */
-    public void getDbTables() {
+    public List<TableDescriptor> getDbTables() {
         List<TableDescriptor> list = jdbcExecutor.getTables();
 
         for (TableDescriptor table : list) {
             ColumnDescriptor[] columns = table.getColumns();
 
-            for (ColumnDescriptor col : columns) {
-                System.out.println(col);
-            }
+            table.setColumns(columns);
         }
+
+        return list;
     }
 
     /**
@@ -115,19 +127,7 @@ public class MigrationContext {
 
     public void execute() {
         try {
-//            List<TableDescriptor> list = getDeclaredTables();
-
-            getDbTables();
-
-            diff();
-
-//            List<String> sqls = generateSql(list);
-//
-//            for (String sql : sqls) {
-//                System.out.println(sql);
-////                update2db(sql);
-//            }
-
+            migration.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }

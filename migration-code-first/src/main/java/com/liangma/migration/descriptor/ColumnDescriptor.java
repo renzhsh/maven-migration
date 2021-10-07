@@ -1,6 +1,6 @@
 package com.liangma.migration.descriptor;
 
-import com.liangma.migration.convert.MapperExpression;
+import com.liangma.migration.mapper.MapperExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
