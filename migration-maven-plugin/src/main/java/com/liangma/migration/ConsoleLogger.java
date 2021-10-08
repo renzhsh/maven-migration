@@ -1,5 +1,6 @@
-package com.liangma.migration.logs;
+package com.liangma.migration;
 
+import com.liangma.migration.logs.ILogger;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

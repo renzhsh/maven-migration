@@ -1,6 +1,7 @@
 package com.liangma.migration.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.google.inject.Provides;
 import com.liangma.migration.mapper.MapperExpression;
 import com.liangma.migration.exception.InvalidExpressionException;
 import com.liangma.migration.mysql.MysqlMigrationProvider;
@@ -17,15 +18,14 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
 public class MigrationConfig {
 
-    @Bean
+    @Provides
     public ClassLoader classLoader() {
         return this.getClass().getClassLoader();
     }
 
-    @Bean("classDirectory")
+    @Provides("classDirectory")
     public String classDirectory(ClassLoader loader) {
         String result = loader.getResource("").getPath();
 

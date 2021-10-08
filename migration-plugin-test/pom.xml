@@ -19,13 +19,17 @@
             <groupId>com.liangma</groupId>
             <artifactId>migration-code-first</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.liangma</groupId>
+            <artifactId>migration-maven-plugin</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>com.liangma</groupId>
-                <artifactId>migration-maven-plugin</artifactId>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.liangma</groupId>-->
+<!--                <artifactId>migration-maven-plugin</artifactId>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>

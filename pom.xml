@@ -72,6 +72,11 @@
                 <version>${migration.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.liangma</groupId>
+                <artifactId>migration-maven-plugin</artifactId>
+                <version>${migration.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>1.2.76</version>

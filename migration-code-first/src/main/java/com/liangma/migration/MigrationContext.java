@@ -1,5 +1,7 @@
 package com.liangma.migration;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.liangma.migration.annotation.Table;
 import com.liangma.migration.mapper.IDescriptorMapper;
 import com.liangma.migration.descriptor.ClassDescriptor;
@@ -33,8 +35,8 @@ public class MigrationContext {
 
     private final ILogger log;
 
-    @Autowired
-    private IJdbcExecutor jdbcExecutor;
+//    @Autowired
+//    private IJdbcExecutor jdbcExecutor;
 
     @Autowired
     private IDescriptorMapper converter;
@@ -59,6 +61,10 @@ public class MigrationContext {
         this.annotatedClassLoader = annotatedClassLoader;
         this.log = log;
 
+        Injector injector = Guice.createInjector(new GuiceModule());
+        // 为当前实例注入容器内的对象
+        injector.injectMembers(this);
+
         System.out.println("Migration ---[风险提示: 本工具仅可用于本地开发环境。如果用于生产环境，对数据库造成的任何损失，本工具概不负责！]");
     }
 
@@ -80,20 +86,20 @@ public class MigrationContext {
         return list;
     }
 
-    /**
-     * step2: 从数据库从获取现有的Table
-     */
-    public List<TableDescriptor> getDbTables() {
-        List<TableDescriptor> list = jdbcExecutor.getTables();
-
-        for (TableDescriptor table : list) {
-            ColumnDescriptor[] columns = table.getColumns();
-
-            table.setColumns(columns);
-        }
-
-        return list;
-    }
+//    /**
+//     * step2: 从数据库从获取现有的Table
+//     */
+//    public List<TableDescriptor> getDbTables() {
+//        List<TableDescriptor> list = jdbcExecutor.getTables();
+//
+//        for (TableDescriptor table : list) {
+//            ColumnDescriptor[] columns = table.getColumns();
+//
+//            table.setColumns(columns);
+//        }
+//
+//        return list;
+//    }
 
     /**
      * step3: 对比二者差异，获取最新变更
@@ -119,9 +125,8 @@ public class MigrationContext {
     /**
      * step5: 根据变更执行到数据库
      */
-    @Transactional
     public void update2db(String sql) {
-        jdbcExecutor.execute(sql);
+//        jdbcExecutor.execute(sql);
     }
 
 
